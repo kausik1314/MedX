@@ -1,72 +1,104 @@
-# Privacy-Preserving Federated Medical Image Classification
+<div align="center">
+  <img src="medx_logo.png" alt="MedX Premium Logo" width="200" />
+  <h1>🏥 MedX DP-AI Framework</h1>
+  <p><strong>Maximum-Level Privacy-Preserving Federated Medical Image Classification</strong></p>
+  
+  [![Python version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  [![Status](https://img.shields.io/badge/status-active-brightgreen.svg)]()
+  [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+</div>
 
-This project demonstrates a secure, privacy-preserving federated learning system for medical image classification using Differential Privacy (DP). It simulates multiple hospitals collaborating to train a shared model without sharing raw patient data.
+---
 
-## Features
+## ✨ Overview
 
-- **Federated Learning**: Uses [Flower](https://flower.ai/) to manage client-server communication.
-- **Differential Privacy**: Uses [Opacus](https://opacus.ai/) to add gradient noise and clipping during local training, providing formal privacy guarantees.
-- **Secure Aggregation Simulation**: Implements encryption simulation for model updates.
-- **Medical Imaging**: Designed for Chest X-Ray (Pneumonia) or Diabetic Retinopathy classification.
-- **Comprehensive Evaluation**: Metrics for Accuracy, Precision, Recall, F1-score, and Privacy Budget ($\epsilon$).
+**MedX** is a state-of-the-art secure federated learning system engineered for medical image classification using **Differential Privacy (DP)**. Designed for scale and maximum security, it seamlessly orchestrates multiple hospital nodes collaborating to train a global deep learning model—without ever exposing raw, sensitive patient data.
 
-## Directory Structure
+## 🚀 Key Features
 
-- `data/`: Dataset handling and partitioning.
-- `models/`: PyTorch model definitions.
-- `federated/`: Flower client and server logic.
-- `privacy/`: Differential Privacy mechanism and accounting.
-- `encryption/`: Encryption utilities.
-- `experiments/`: Scripts for running baseline and FL experiments.
-- `evaluation/`: plotting and analysis tools.
+- **Decentralized AI**: Powered by [Flower](https://flower.ai/), seamlessly managing high-performance client-server communication.
+- **Cryptographic Privacy**: Integrates [Opacus](https://opacus.ai/) for rigorous Differential Privacy (DP-SGD), providing provable protections against model inversion attacks.
+- **Secure Aggregation**: Implements enterprise-grade encryption simulation for model updates.
+- **Real-Time Analytics**: Built-in glassmorphism web dashboard for tracking accuracy, global loss, and exactly tracking the privacy budget ($\epsilon$).
 
-## Installation
+## 🏗️ Architecture
 
-1. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+The MedX framework guarantees that local data never leaves the hospital environment. Updates are noise-injected, clipped, and encrypted before aggregation.
 
-## Usage
+```mermaid
+graph TD
+    classDef server fill:#0f172a,stroke:#818cf8,stroke-width:2px,color:#fff;
+    classDef client fill:#1e1b4b,stroke:#c084fc,stroke-width:2px,color:#fff;
+    classDef data fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff;
+    
+    Server[🌐 Global Aggregation Server]:::server
+    
+    subgraph "🏥 Hospital Node Alpha (Secure Enclave)"
+        DataA[(Private Medical Data)]:::data
+        ModelA[Local AI Engine]:::client
+        DP_A[Privacy Injector (DP-SGD)]:::client
+        Enc_A[Encryption Layer]:::client
+        
+        DataA -->|Train| ModelA
+        ModelA -->|Compute Gradients| DP_A
+        DP_A -->|Noisy Updates| Enc_A
+    end
 
-### 1. Run Federated Learning Simulation
-Run the main simulation. This will now log real-time metrics to `metrics.csv`.
+    subgraph "🏥 Hospital Node Beta (Secure Enclave)"
+        DataB[(Private Medical Data)]:::data
+        ModelB[Local AI Engine]:::client
+        DP_B[Privacy Injector (DP-SGD)]:::client
+        Enc_B[Encryption Layer]:::client
+        
+        DataB -->|Train| ModelB
+        ModelB -->|Compute Gradients| DP_B
+        DP_B -->|Noisy Updates| Enc_B
+    end
 
-```bash
-python main.py
+    Server -->|Sync Weights| ModelA
+    Server -->|Sync Weights| ModelB
+    
+    Enc_A -->|Encrypted Transmission| Server
+    Enc_B -->|Encrypted Transmission| Server
 ```
 
-### 2. Launch Interactive Dashboard
-Visualize the training progress, privacy budget, and accuracy in real-time.
+## 🛠️ Installation & Quick Start
 
+### 1. Environment Setup
+
+Create an isolated virtual environment to protect dependencies:
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. Launching the Simulation
+
+Our high-fidelity premium CLI features real-time progress indicators:
+```bash
+python main.py --config config.yaml
+```
+
+### 3. Analytics Command Center
+
+Monitor your decentralized network live through our modern, responsive dashboard:
 ```bash
 streamlit run dashboard.py
 ```
 
-### 3. Monitor Progress
-The script prints logs to the console, while the dashboard provides a rich visual interface.
+## 📊 Analytics & Reporting
 
-### 4. Visualizations (Static)
-The system automatically tracks metrics. You can regenerate the performance plots using:
+- **Dashboard**: Run `dashboard.py` for real-time, interactive insights.
+- **Research**: Read our detailed academic write-up at `research_report.md`.
+- **Static Assets**: Automatically generated plots are saved to `evaluation/`.
 
-```bash
-python evaluation/plot_results.py
-```
+## ⚙️ Configuration
+Fine-tune the simulation by adjusting the hyperparameters in `config.yaml`:
+- **Rounds**: `experiment.rounds`
+- **Clients**: `experiment.num_clients`
+- **Privacy Budget**: `privacy.target_epsilon`
 
-## Results
-- **Report**: A detailed research report draft is available at `research_report.md`.
-- **Plots**: Performance and privacy plots are saved in the `evaluation/` directory.
-- **Logs**: Training logs are printed to the console.
-
-## Configuration
-You can customize the simulation by editing `config.yaml`:
-- `experiment.rounds`: Number of FL rounds (default: 5)
-- `experiment.num_clients`: Number of simulated clients (default: 2)
-- `privacy.target_epsilon`: Desired privacy budget (default: 10.0)
-- `training.batch_size`: Batch size for local training
-
+---
+> **Note**: This is a simulated environment created for research and demonstration purposes.

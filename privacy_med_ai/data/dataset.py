@@ -38,4 +38,4 @@ def load_dataset(dataset_name="pneumoniamnist", download=True, split="train"):
     return dataset
 
 def get_dataloader(dataset, batch_size=32, shuffle=True):
-    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0)

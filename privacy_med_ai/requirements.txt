@@ -9,3 +9,7 @@ pyyaml
 cryptography
 tqdm
 medmnist # For easy access to medical datasets
+streamlit
+pandas
+plotly
+rich

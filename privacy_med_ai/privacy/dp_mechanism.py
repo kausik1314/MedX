@@ -25,8 +25,9 @@ def apply_dp(model, optimizer, data_loader, target_epsilon, target_delta, max_gr
         data_loader=data_loader,
         target_epsilon=target_epsilon,
         target_delta=target_delta,
-        epochs=epochs, # Correctly pass epochs
+        epochs=epochs, 
         max_grad_norm=max_grad_norm,
+        poisson_sampling=False,
     )
     
     return model, optimizer, data_loader, privacy_engine

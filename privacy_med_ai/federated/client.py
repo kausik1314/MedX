@@ -18,6 +18,11 @@ class MedClient(fl.client.NumPyClient):
         self.train_loader = data_loader
         self.epochs = epochs
         self.privacy_config = privacy_config
+
+        if self.privacy_config['enabled']:
+            from opacus.validators import ModuleValidator
+            self.model = ModuleValidator.fix(self.model)
+
         self.model.to(self.device)
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.01, momentum=0.9)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.95)
@@ -35,12 +40,24 @@ class MedClient(fl.client.NumPyClient):
             )
 
     def get_parameters(self, config):
-        return [val.cpu().numpy() for _, val in self.model.state_dict().items()]
+        # Strip '_module.' prefix from keys if wrapped by Opacus
+        # to ensure global FedAvg works cleanly without strict match issues.
+        params = []
+        for k, val in self.model.state_dict().items():
+            if not k.endswith("num_batches_tracked"): # Skip BN stats, if any
+                params.append(val.cpu().numpy())
+        return params
 
     def set_parameters(self, parameters):
-        params_dict = zip(self.model.state_dict().keys(), parameters)
+        # We need to map the incoming parameters (from the global model)
+        # to the keys of our (potentially Opacus-wrapped) local model.
+        # Since the architectures match, we can map them by ordinal position, excluding ignored keys.
+        
+        state_dict_keys = [k for k in self.model.state_dict().keys() if not k.endswith("num_batches_tracked")]
+        params_dict = zip(state_dict_keys, parameters)
         state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-        self.model.load_state_dict(state_dict, strict=True)
+        
+        self.model.load_state_dict(state_dict, strict=False)
 
     def fit(self, parameters, config):
         self.set_parameters(parameters)

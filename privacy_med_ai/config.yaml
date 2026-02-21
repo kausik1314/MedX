@@ -1,6 +1,6 @@
 experiment:
   name: "federated_dp_medical_imaging"
-  rounds: 5
+  rounds: 15
   num_clients: 2  # Number of clients to simulate 
   fraction_fit: 1.0  # Fraction of clients used for training
   dataset: "pneumoniamnist" # or "retinopathy" (simulated)
